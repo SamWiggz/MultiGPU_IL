@@ -9,7 +9,7 @@ Preliminary: Have [conda](https://www.anaconda.com/download/success) installed
 
 1. Clone this repository:
 ```
-git clone 
+git clone https://github.com/SamWiggz/MultiGPU_IL.git
 ```
 2. Extract the provided environment file using conda:
 ```
