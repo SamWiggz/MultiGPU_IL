@@ -46,6 +46,7 @@ cd algorithms/iddpg
 2. Edit the Config.py file to adjust desired hyperparameters.
 
 Some Important hyperparameters:
+- `gpu_assignment`: number of learners per GPU. Ex: [1,1], 1 learner on GPU0 and GPU1. Adjust the length of list wrt number of GPUs.
 - `n_agents`: number of agents
 - `map_size`: map size of Pogema environment
 - `n_episodes`: number of episodes for the experiment
