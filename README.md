@@ -4,6 +4,16 @@
 
 ## Overview
 
+A widely adopted approach in Multi-Agent Reinforcement Learning (MARL) is Independent Learning (IL), where each agent learns independently, treating others as part of the environment. However, existing libraries and implementations constrict the potential parallelization possible when training non-communicative IL systems. The majority of works adopt the Single-GPU training scheme below, which launches a single learner to train all IL agents sequentially. While this is needed to preserve the training semantics of communicative MARL algorithms, this sequential policy update is a limitation for IL systems.
+<div align="center">
+<img src=images/single_gpu.png width=75% />
+</div>
+
+We introduce a novel Independent Multi-GPU training scheme that launches parallel learners that each train a subset of independent agents. It includes an Agent Load Balancer that adjusts the agent assignment for each learner during runtime, balancing the training load between learners that are potentially mapped on GPUs with varying compute capabilities. Our implementations outperform the Single-GPU training scheme by up to 15.5x increased system throughput on the large-scale Pogema environment that scales to large-scale scenarios.
+<div align="center">
+<img src=images/multi_gpu.png width=75% />
+</div>
+
 ## 1. Environment Setup
 Preliminary: Have [conda](https://www.anaconda.com/download/success) installed
 
