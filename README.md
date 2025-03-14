@@ -53,8 +53,7 @@ Some Important hyperparameters:
 - `n_rollout_threads`: max number of possible rollout simulations
 - `hidden_sizes`: hidden dimension size for agent neural networks
 - `batch_size`: batch size of experiences that will be sampled by learner(s)
-- `percentage_search`: percentage of the entire search space that ARC will test
-3. Run your Multi-GPU independent learning experiment!
+3. Run your Multi-GPU independent learning experiment:
 ```
 python main.py
 ```
