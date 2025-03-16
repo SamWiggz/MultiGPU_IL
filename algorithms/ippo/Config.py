@@ -27,7 +27,7 @@ buffer_length = batch_size
 ####
 n_agents = 1024
 mapsize = 75 #21
-n_episodes = 100
+n_episodes = 10000
 n_rollout_threads = 64
 n_training_threads = 1
 n_updates = 8
@@ -38,7 +38,7 @@ discrete_action = True
 init_noise_scale = 0.3
 final_noise_scale = 0.0
 seed = 1
-n_exploration_eps = 100
+n_exploration_eps = 10000
 
 ####
 #### DDP ####
