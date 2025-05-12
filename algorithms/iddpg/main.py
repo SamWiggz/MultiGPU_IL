@@ -119,28 +119,19 @@ def main_actors(iddpg, shared_memory_params):
                         else :
                             first_mu_time = False
                         fin_dc[0] = 0
-                        if dc_count != 0:
-                            print("Avg Data Collection Time: ", dc_tot/dc_count,"s")
-                            print("Avg Model Update Time: ", mu_time/mu_count,"s")
                         load_agents_from_shared_memory(iddpg.agents, shared_memory_params['shared_memory_blocks'], shared_memory_params['shared_mem'])
                         break
-
-        # print("Actor")
-        # for param in iddpg.agents[0].policy_nn.parameters():
-        #     print(param)  # Print memory address of parameter
-
-        #print((t % Config.steps_per_update) < Config.n_rollout_threads)
+        if dc_count != 0 and  mu_count % (Config.n_rollout_threads * 4) == 0:
+            print(f"Avg Data Collection Time: {dc_tot / dc_count:.3f}s")
+            print(f"Avg Model Update Time: {mu_time / mu_count:.3f}s")
+            print(f"Avg Iteration Time: {(dc_tot / dc_count + mu_time / mu_count):.3f}s")
     env.close()
     
-    fin_done[0] = 1
-    # logger.export_scalars_to_json(str(log_dir / 'summary.json'))
-    # logger.close()
-    print("Total Train Time: ", (time.perf_counter()-train_start),"s")
-    print("Avg Data Collection Time: ", dc_tot/dc_count,"s")
-    print("Avg Model Update Time: ", mu_time/mu_count,"s")
-    print("dc_count", dc_count)
-    print(mu_time)
-    print(mu_count)
+    fin_done[0] = 1   
+    print(f"Avg Data Collection Time: {dc_tot / dc_count:.3f}s")
+    print(f"Avg Model Update Time: {mu_time / mu_count:.3f}s")
+    print(f"Avg Iteration Time: {(dc_tot / dc_count + mu_time / mu_count):.3f}s")
+    print(f"Total End-to-End Training Time: {(time.perf_counter() - train_start):.3f}s")
 
 def main_learners(rank, iddpg, world_size, shared_memory_params, lock):
     torch.cuda.set_device(get_device(rank))
@@ -189,7 +180,6 @@ def main_learners(rank, iddpg, world_size, shared_memory_params, lock):
     mu_tot = 0
     mu_count = 0
     exit_outer_loop = False
-    print(get_device(rank))
     while(1):
         while(1):
             if(fin_dc[0]):
@@ -216,7 +206,7 @@ def main_learners(rank, iddpg, world_size, shared_memory_params, lock):
 
         mu_tot = time.perf_counter() - mu_clock
         mu_count += 1
-        print("Rank: ", rank, torch.cuda.get_device_name(get_device(rank)), "Model Update Time: ", mu_tot,"s")
+        #print("Rank: ", rank, torch.cuda.get_device_name(get_device(rank)), "Model Update Time: ", mu_tot,"s")
         copy_agents_to_shared_memory(iddpg.agents, shared_memory_params['shared_memory_blocks'], shared_memory_params['shared_mem'], start_idx, end_idx)
         dist.barrier()
 
@@ -242,8 +232,8 @@ def main_learners(rank, iddpg, world_size, shared_memory_params, lock):
     dist.destroy_process_group()
 
 if __name__ == '__main__':
-    mp.set_start_method('spawn')
-    ctx = mp.get_context('spawn')
+    mp.set_start_method('fork')
+    ctx = mp.get_context('fork')
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = Config.port
     world_size_learners = sum(Config.gpu_assignment)

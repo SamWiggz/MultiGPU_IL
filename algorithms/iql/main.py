@@ -123,17 +123,19 @@ def main_actors(iql, shared_memory_params):
                         else :
                             first_mu_time = False
                         fin_dc[0] = 0
-                        if dc_count != 0 and mu_count != 0:
-                            print("Avg Data Collection Time: ", dc_tot/dc_count,"s")
-                            print("Avg Model Update Time: ", mu_time/mu_count,"s")
                         load_agents_from_shared_memory(iql.agents, shared_memory_params['shared_memory_blocks'], shared_memory_params['shared_mem'])
                         break
+        if dc_count != 0 and  mu_count % (Config.n_rollout_threads * 4) == 0:
+            print(f"Avg Data Collection Time: {dc_tot / dc_count:.3f}s")
+            print(f"Avg Model Update Time: {mu_time / mu_count:.3f}s")
+            print(f"Avg Iteration Time: {(dc_tot / dc_count + mu_time / mu_count):.3f}s")
     env.close()
     
-    fin_done[0] = 1           
-    print("Total Train Time: ", (time.perf_counter()-train_start),"s")
-    print("Avg Data Collection Time: ", dc_tot/dc_count,"s")
-    print("Avg Model Update Time: ", mu_time/mu_count,"s")
+    fin_done[0] = 1   
+    print(f"Avg Data Collection Time: {dc_tot / dc_count:.3f}s")
+    print(f"Avg Model Update Time: {mu_time / mu_count:.3f}s")
+    print(f"Avg Iteration Time: {(dc_tot / dc_count + mu_time / mu_count):.3f}s")
+    print(f"Total End-to-End Training Time: {(time.perf_counter() - train_start):.3f}s")
 
 def main_learners(rank, iql, world_size, shared_memory_params, lock):
     torch.cuda.set_device(get_device(rank))
@@ -210,7 +212,7 @@ def main_learners(rank, iql, world_size, shared_memory_params, lock):
 
             mu_tot = time.perf_counter() - mu_clock
             mu_count += 1
-            print("Rank: ", rank, torch.cuda.get_device_name(get_device(rank)), "Model Update Time: ", mu_tot,"s")
+            #print("Rank: ", rank, torch.cuda.get_device_name(get_device(rank)), "Model Update Time: ", mu_tot,"s")
             copy_agents_to_shared_memory(iql.agents, shared_memory_params['shared_memory_blocks'], shared_memory_params['shared_mem'], start_idx, end_idx)
             dist.barrier()
 

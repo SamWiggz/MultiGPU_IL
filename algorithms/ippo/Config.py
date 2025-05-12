@@ -45,4 +45,4 @@ n_exploration_eps = 10000
 ####
 port = '11112'
 
-gpu_assignment = [1, 1]
+gpu_assignment = [1, 1]  ### [1 learner on GPU0, 1 learner on GPU1]
