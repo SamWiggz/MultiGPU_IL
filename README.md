@@ -1,5 +1,7 @@
 # Accelerating Independent Multi-Agent Reinforcement Learning on Multi-GPU Platforms
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15579913.svg)](https://doi.org/10.5281/zenodo.15579913)
+
 ## Overview
 
 A widely adopted approach in Multi-Agent Reinforcement Learning (MARL) is Independent Learning (IL), where each agent learns independently, treating others as part of the environment. However, existing libraries and implementations constrict the potential parallelization possible when training non-communicative IL systems. The majority of works adopt the Single-GPU training scheme below, which launches a single learner to train all IL agents sequentially. While this is needed to preserve the training semantics of communicative MARL algorithms, this sequential policy update is a limitation for IL systems.
